@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registrarse - EduFlow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-top">
+                    <div class="user-avatar">EF</div>
+                    <div class="header-icons"></div>
+                </div>
+                <h1>EduFlow</h1>
+                <p style="font-size:14px;opacity:0.9;">Crea tu cuenta para empezar</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="auth-section" style="max-width:520px;margin:20px auto;padding:24px;">
+                <h2 style="margin-bottom:12px">Crear cuenta</h2>
+                <form id="registerForm" action="#" method="POST">
+                    <div class="input-group">
+                        <label for="fullname">Nombre completo</label>
+                        <input type="text" name="fullname" id="fullname" placeholder="Tu nombre completo" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" name="email" id="email" placeholder="tucorreo@ejemplo.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" name="password" id="password" placeholder="Contraseña" required>
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn btn-primary">Registrarse</button>
+                    </div>
+                </form>
+
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:8px;">
+                    <a href="login.html" style="color:#4f46e5;font-weight:600;">¿Ya tienes cuenta? Inicia sesión</a>
+                    <a href="index.html" style="color:#64748b;">Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Registro cliente: guarda usuario en localStorage (demostración local)
+        document.getElementById('registerForm').addEventListener('submit', function(e){
+            e.preventDefault();
+
+            const name = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const pw = document.getElementById('password').value.trim();
+
+            if(!name || !email || !pw){
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            // Create a simple user object. NOTE: storing passwords in localStorage is insecure
+            // and only appropriate for local demos. For production, submit to a secure backend.
+            const user = {
+                username: email.split('@')[0],
+                displayName: name,
+                email: email,
+                password: pw,
+                avatar: (name.split(' ').map(n=>n[0]).slice(0,2).join('') || 'U').toUpperCase()
+            };
+
+            try {
+                localStorage.setItem('eduflow_user', JSON.stringify(user));
+                // Redirect silently to the main app
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error('Error almacenando usuario:', err);
+                alert('No se pudo guardar el usuario en el navegador. Revisa el almacenamiento local.');
+            }
+        });
+    </script>
+</body>
+</html>

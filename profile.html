@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Perfil - EduFlow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-top">
+                    <div class="user-avatar" id="profileAvatar">EF</div>
+                    <div class="header-icons">
+                        <button class="icon-btn" onclick="history.back()">◀</button>
+                    </div>
+                </div>
+                <h1>Mi perfil</h1>
+                <p style="font-size:14px;opacity:0.9;">Información de tu cuenta</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card" style="max-width:520px;margin:20px auto;">
+                <div style="display:flex;gap:16px;align-items:center;">
+                    <div style="width:96px;height:96px;border-radius:12px;overflow:hidden;flex:0 0 96px;">
+                        <img id="profileAvatarImg" src="" alt="avatar" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;">
+                        <div id="profileInitials" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#1e293b;background:linear-gradient(135deg,#fbbf24,#f59e0b)"></div>
+                    </div>
+                    <div>
+                        <h2 id="profileName">Usuario</h2>
+                        <p id="profileEmail" style="color:#64748b"></p>
+                    </div>
+                </div>
+
+                <hr style="margin:16px 0">
+
+                <div style="display:flex;gap:8px;">
+                    <button id="profileLogout" class="btn">Cerrar sesión</button>
+                    <button id="profileBack" class="btn btn-secondary">Volver</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load user from localStorage and show in the profile page
+        (function(){
+            try{
+                const raw = localStorage.getItem('eduflow_user');
+                if(!raw) return;
+                const user = JSON.parse(raw);
+                const nameEl = document.getElementById('profileName');
+                const emailEl = document.getElementById('profileEmail');
+                const avatarImg = document.getElementById('profileAvatarImg');
+                const initials = document.getElementById('profileInitials');
+                const avatarWrap = document.getElementById('profileAvatar');
+                if(nameEl) nameEl.textContent = user.displayName || user.username || '';
+                if(emailEl) emailEl.textContent = user.email || '';
+                if(user.avatar && user.avatar.startsWith && user.avatar.startsWith('data:')){
+                    avatarImg.src = user.avatar;
+                    avatarImg.style.display = 'block';
+                    initials.style.display = 'none';
+                } else {
+                    avatarImg.style.display = 'none';
+                    initials.textContent = (user.displayName || user.username || 'U').slice(0,2).toUpperCase();
+                }
+            }catch(e){ console.error(e) }
+        })();
+
+        document.getElementById('profileLogout').addEventListener('click', function(){
+            localStorage.removeItem('eduflow_user');
+            window.location.href = 'index.html';
+        });
+        document.getElementById('profileBack').addEventListener('click', function(){ history.back(); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es"> <!-- Indica que el contenido está en español -->
+<head>
+    <meta http-equiv="refresh" content="0; url=login.html">
+    <meta charset="UTF-8"> <!-- Codificación de caracteres para soporte de acentos y ñ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configuración para dispositivos móviles -->
+    <title>EduFlow - Tu Asistente Académico</title> <!-- Título que aparece en la pestaña del navegador -->
+    <link rel="stylesheet" href="css/style.css"> <!-- Conexión con el archivo de estilos CSS -->
+</head>
+<body>
+    <!-- Contenedor principal de la aplicación -->
+    <div class="app-container">
+        <!-- Encabezado de la aplicación -->
+        <div class="header">
+            <div class="header-content">
+                <!-- Parte superior del encabezado -->
+                <div class="header-top">
+                    <!-- Avatar del usuario -->
+                    <div class="user-avatar">JA</div>
+                    <!-- Iconos de notificaciones y configuración -->
+                    <div class="header-icons">
+                        <!-- Botón de notificaciones con contador -->
+                        <button class="icon-btn" onclick="showNotifications()">🔔<span class="badge" id="notifBadge">0</span></button>
+                        <!-- Botón de configuración -->
+                        <button class="icon-btn" onclick="showSettings()">⚙️</button>
+                    </div>
+                </div>
+                <!-- Mensaje de bienvenida -->
+                <h1>Hola, 👋</h1>
+                <p style="font-size: 14px; opacity: 0.9;">Sigue construyendo tu mejor versión</p>
+                <!-- Estadísticas del encabezado -->
+                <div class="header-stats">
+                    <!-- Tarjeta de racha de días -->
+                    <div class="stat-card">
+                        <div class="label">Racha</div>
+                        <div class="value" id="headerStreak">0🔥</div>
+                    </div>
+                    <!-- Tarjeta de tareas completadas -->
+                    <div class="stat-card">
+                        <div class="label">Tareas</div>
+                        <div class="value" id="headerTasks">0/0</div>
+                    </div>
+                    <!-- Tarjeta de nivel del usuario -->
+                    <div class="stat-card">
+                        <div class="label">Nivel</div>
+                        <div class="value" id="headerLevel">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Section removed: login/register moved to separate pages -->
+
+        <div class="main-content">
+            <!-- HOME SECTION (Dashboard) -->
+            <div id="home" class="section active" data-section="home">
+                <div class="streak-counter">
+                    <span class="icon">🔥</span>
+                    <span>¡Racha de <span id="streakDays">0</span> días!</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📊</span> Resumen de Hoy</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="icon">✅</div>
+                            <div class="value" id="completedToday">0</div>
+                            <div class="label">Completadas</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="icon">⏰</div>
+                            <div class="value" id="pomodorosToday">0</div>
+                            <div class="label">Pomodoros</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="icon">🎯</div>
+                            <div class="value" id="focusTime">0h</div>
+                            <div class="label">Tiempo Focus</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="icon">⚡</div>
+                            <div class="value" id="xpPoints">0</div>
+                            <div class="label">XP Ganados</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">🎯</span> Progreso Semanal</h2>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Meta: 15 tareas</span>
+                            <span id="weekProgress">0/15</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="weekProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">🔥</span> Tareas Urgentes</h2>
+                        <button class="card-action" onclick="showSection('tareas')">Ver todas</button>
+                    </div>
+                    <div id="urgentTasks"></div>
+                </div>
+            </div>
+
+            <!-- TAREAS SECTION -->
+            <div id="tareas" class="section" data-section="tareas">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="todas">Todas</button>
+                    <button class="filter-tab" data-filter="pendientes">Pendientes</button>
+                    <button class="filter-tab" data-filter="completadas">Completadas</button>
+                    <button class="filter-tab" data-filter="alta">Alta Prioridad</button>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title"><span class="icon">➕</span> Nueva Tarea</h2>
+                    <div class="input-group">
+                        <label>Título</label>
+                        <input type="text" id="taskTitle" placeholder="Ej: Estudiar para examen de matemáticas">
+                    </div>
+                    <div class="input-group">
+                        <label>Descripción</label>
+                        <textarea id="taskDesc" rows="3" placeholder="Detalles adicionales..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Fecha límite</label>
+                        <input type="date" id="taskDate">
+                    </div>
+                    <div class="input-group">
+                        <label>Tiempo estimado (minutos)</label>
+                        <input type="number" id="taskTime" placeholder="25" min="5" step="5">
+                    </div>
+                    <div class="input-group">
+                        <label>Prioridad</label>
+                        <select id="taskPriority">
+                            <option value="alta">🔴 Alta</option>
+                            <option value="media" selected>🟡 Media</option>
+                            <option value="baja">🟢 Baja</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="handleAddTask()">
+                        <span>✓</span> Agregar Tarea
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📋</span> Mis Tareas</h2>
+                    </div>
+                    <div id="taskList"></div>
+                </div>
+            </div>
+
+            <!-- FLASHCARDS SECTION -->
+            <div id="flashcards" class="section" data-section="flashcards">
+                <div class="card">
+                    <h2 class="card-title"><span class="icon">➕</span> Nueva Flashcard</h2>
+                    <div class="input-group">
+                        <label>Materia</label>
+                        <input type="text" id="flashSubject" placeholder="Ej: Matemáticas, Historia, Inglés">
+                    </div>
+                    <div class="input-group">
+                        <label>Pregunta / Concepto</label>
+                        <textarea id="flashQuestion" rows="3" placeholder="¿Qué quieres memorizar?"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Respuesta / Definición</label>
+                        <textarea id="flashAnswer" rows="3" placeholder="Escribe la respuesta o explicación"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="handleAddFlashcard()">
+                        <span>✓</span> Crear Flashcard
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">🎴</span> Estudiar</h2>
+                        <span id="flashProgress"></span>
+                    </div>
+                    <div id="flashcardDisplay"></div>
+                    <p class="helper-text">💡 Toca la tarjeta para voltearla</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📚</span> Mis Materias</h2>
+                    </div>
+                    <div id="subjectsList"></div>
+                </div>
+            </div>
+
+            <!-- CALENDARIO SECTION -->
+            <div id="calendario" class="section" data-section="calendario">
+                <div class="card">
+                    <div class="calendar-header">
+                        <div class="calendar-month" id="calendarMonth"></div>
+                        <div class="calendar-nav">
+                            <button onclick="previousWeek()">◀</button>
+                            <button onclick="nextWeek()">▶</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📅</span> Próximos Pendientes</h2>
+                    </div>
+                    <div id="upcomingTasks"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📈</span> Productividad Semanal</h2>
+                    </div>
+                    <div id="weeklyChart"></div>
+                </div>
+            </div>
+
+            <!-- ÁNIMO SECTION -->
+            <div id="animo" class="section" data-section="animo">
+                <div class="card">
+                    <h2 class="card-title"><span class="icon">😊</span> ¿Cómo te sientes hoy?</h2>
+                    <div class="mood-options">
+                        <button class="mood-btn" data-mood="5" title="Excelente">😄</button>
+                        <button class="mood-btn" data-mood="4" title="Bien">🙂</button>
+                        <button class="mood-btn" data-mood="3" title="Normal">😐</button>
+                        <button class="mood-btn" data-mood="2" title="Bajo">😔</button>
+                        <button class="mood-btn" data-mood="1" title="Mal">😢</button>
+                    </div>
+                    <div class="mood-intensity">
+                        <h4>💪 Capacidad de trabajo recomendada</h4>
+                        <div class="intensity-bar">
+                            <div class="intensity-fill" id="intensityFill" style="width: 0%"></div>
+                        </div>
+                        <p id="intensityText"></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📊</span> Historial de Ánimo (7 días)</h2>
+                    </div>
+                    <div id="moodHistory"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">💡</span> Recomendaciones</h2>
+                    </div>
+                    <div id="moodRecommendations"></div>
+                </div>
+            </div>
+
+            <!-- POMODORO SECTION -->
+            <div id="pomodoro" class="section" data-section="pomodoro">
+                <div class="card">
+                    <h2 class="card-title"><span class="icon">⏱️</span> Temporizador Pomodoro</h2>
+                    
+                    <div class="pomodoro-modes">
+                        <button class="mode-btn active" data-mode="focus">🎯 Focus (25m)</button>
+                        <button class="mode-btn" data-mode="short">☕ Pausa (5m)</button>
+                        <button class="mode-btn" data-mode="long">🌴 Largo (15m)</button>
+                    </div>
+
+                    <div class="pomodoro-display">
+                        <div class="timer-circle">
+                            <svg width="250" height="250">
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="bg" cx="125" cy="125" r="110"></circle>
+                                <circle class="progress" cx="125" cy="125" r="110" 
+                                    stroke-dasharray="691" 
+                                    stroke-dashoffset="691" 
+                                    id="timerProgress"></circle>
+                            </svg>
+                            <div class="timer" id="pomodoroTimer">25:00</div>
+                            <div class="timer-label" id="timerLabel">Presiona Iniciar</div>
+                        </div>
+                    </div>
+                    
+                    <div class="pomodoro-controls">
+                        <button class="btn btn-success" onclick="pomodoroManager.start()">
+                            <span>▶️</span> Iniciar
+                        </button>
+                        <button class="btn btn-secondary" onclick="pomodoroManager.pause()">
+                            <span>⏸️</span> Pausar
+                        </button>
+                        <button class="btn btn-danger" onclick="pomodoroManager.reset()">
+                            <span>🔄</span> Reiniciar
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>🎯 Tarea vinculada (opcional)</label>
+                        <select id="pomodoroTask">
+                            <option value="">Seleccionar tarea...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="icon">📊</span> Estadísticas de Hoy</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="icon">🍅</div>
+                            <div class="value" id="pomodoroCount">0</div>
+                            <div class="label">Pomodoros</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="icon">⏰</div>
+                            <div class="value" id="totalMinutes">0m</div>
+                            <div class="label">Tiempo Total</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="icon">🎯</div>
+                            <div class="value" id="focusScore">0%</div>
+                            <div class="label">Enfoque</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="icon">🏆</div>
+                            <div class="value" id="bestStreak">0</div>
+                            <div class="label">Mejor Racha</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="fab" title="Agregar nueva tarea">+</button>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-section="home">
+                <span>🏠</span>
+                <p>Inicio</p>
+            </button>
+            <button class="nav-item" data-section="tareas">
+                <span>✓</span>
+                <p>Tareas</p>
+            </button>
+            <button class="nav-item" data-section="flashcards">
+                <span>📚</span>
+                <p>Flashcards</p>
+            </button>
+            <button class="nav-item" data-section="calendario">
+                <span>📅</span>
+                <p>Calendario</p>
+            </button>
+            <button class="nav-item" data-section="animo">
+                <span>😊</span>
+                <p>Ánimo</p>
+            </button>
+            <button class="nav-item" data-section="pomodoro">
+                <span>⏱️</span>
+                <p>Pomodoro</p>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div class="achievement" id="achievement">
+        <div class="icon">🏆</div>
+        <div class="content">
+            <h4 id="achievementTitle">¡Logro Desbloqueado!</h4>
+            <p id="achievementDesc">Has completado tu primera tarea</p>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settingsPanel" class="settings-panel" aria-hidden="true">
+        <h4>Configuración</h4>
+        <div class="settings-row">
+            <div id="settingsAvatarWrap"><img id="settingsAvatar" src="" alt="Avatar"></div>
+            <div>
+                <div id="settingsName" style="font-weight:700">Usuario</div>
+                <div id="settingsEmail" style="font-size:13px;color:#64748b"></div>
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <label for="profilePicInput" class="btn btn-secondary" style="cursor:pointer;width:100%;text-align:center">Agregar / Cambiar foto</label>
+            <input id="profilePicInput" type="file" accept="image/*" style="display:none">
+        </div>
+
+        <div class="settings-actions">
+            <button id="viewAccountBtn" class="btn btn-primary">Ver perfil</button>
+            <button id="logoutBtn" class="btn">Cerrar sesión</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module">
+        import { app } from './js/app.js';
+        import { taskManager } from './js/tasks.js';
+        import { pomodoroManager } from './js/pomodoro.js';
+        import { calendarManager } from './js/calendar.js';
+        import { flashcardManager } from './js/flashcards.js';
+        import { moodManager } from './js/mood.js';
+
+        // Hacer disponibles las funciones globalmente
+        window.app = app;
+        window.taskManager = taskManager;
+        window.pomodoroManager = pomodoroManager;
+        window.calendarManager = calendarManager;
+        window.flashcardManager = flashcardManager;
+        window.moodManager = moodManager;
+
+        // Funciones globales
+        window.showSection = (sectionId) => app.showSection(sectionId);
+        window.handleAddTask = () => {
+            const taskData = {
+                title: document.getElementById('taskTitle').value,
+                desc: document.getElementById('taskDesc').value,
+                date: document.getElementById('taskDate').value,
+                time: document.getElementById('taskTime').value,
+                priority: document.getElementById('taskPriority').value
+            };
+
+            if (!taskData.title || !taskData.date) {
+                alert('Por favor completa al menos el título y la fecha');
+                return;
+            }
+
+            taskManager.addTask(taskData);
+            
+            // Clear form
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDesc').value = '';
+            document.getElementById('taskTime').value = '';
+            document.getElementById('taskPriority').value = 'media';
+        };
+
+        window.handleAddFlashcard = () => {
+            const flashcardData = {
+                subject: document.getElementById('flashSubject').value,
+                question: document.getElementById('flashQuestion').value,
+                answer: document.getElementById('flashAnswer').value
+            };
+
+            if (!flashcardData.subject || !flashcardData.question || !flashcardData.answer) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            flashcardManager.addFlashcard(flashcardData);
+            
+            // Clear form
+            document.getElementById('flashSubject').value = '';
+            document.getElementById('flashQuestion').value = '';
+            document.getElementById('flashAnswer').value = '';
+        };
+
+        // Funciones del calendario
+        window.previousWeek = () => calendarManager.previousWeek();
+        window.nextWeek = () => calendarManager.nextWeek();
+
+        // Inicializar la aplicación
+        app.init();
+    </script>
+</body>
+</html>
